@@ -59,6 +59,7 @@ if st.session_state["stage"] == 2:
 
     for message in st.session_state.messages[2:]:
         with st.chat_message(message["role"]):
+            print(message["role"])
             st.markdown(message["content"])
 
     if len(st.session_state.messages) == 2:
@@ -82,6 +83,9 @@ if st.session_state["stage"] == 2:
         st.session_state.messages.append({"role": "user", "content": prompt})
         with st.chat_message("user"):
             st.markdown(prompt)
+        if len(st.session_state.messages) > MAX_MESSAGES:
+            suffix = "\nThis is the last message. Also provide a concluding remark with the response based on the discussion."
+            st.session_state.messages[-1]["content"] += suffix  # add suffix to last message
         with st.chat_message("assistant"):
             message_placeholder = st.empty()
             full_response = ""
@@ -98,8 +102,8 @@ if st.session_state["stage"] == 2:
             message_placeholder.markdown(full_response)
         st.session_state.messages.append({"role": "assistant", "content": full_response})
 
-    if len(st.session_state.messages) > MAX_MESSAGES+2:
-        st.session_state["stage"] = 3
+    if len(st.session_state.messages) > MAX_MESSAGES+1:
+        st.button("Next", key="next2", on_click=lambda: st.session_state.update({"stage": 3}))
 
 
 # stage 1: get the question and answer
